@@ -1,7 +1,6 @@
 package com.dev.bruno.insuranceapi.api;
 
 import com.dev.bruno.insuranceapi.domain.User;
-import com.dev.bruno.insuranceapi.service.PriceService;
 import com.dev.bruno.insuranceapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

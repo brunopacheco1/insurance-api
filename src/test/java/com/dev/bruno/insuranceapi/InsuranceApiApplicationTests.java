@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @ActiveProfiles("develop")
 @RunWith(SpringRunner.class)
@@ -39,6 +40,24 @@ public class InsuranceApiApplicationTests {
         request.setUserId(USER_ID);
         Price price = priceService.calculatePrice(request);
         Assert.assertTrue(price.getValue().compareTo(EXPECTED_PRICE_VALUE) == 0);
+    }
+
+    @Test
+    public void shouldReturnPriceHistory() {
+        List<Price> prices = priceService.listPricesByUser(USER_ID);
+        Assert.assertFalse(prices.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyPriceHistory_NotExistingUser() {
+        List<Price> prices = priceService.listPricesByUser(NOT_EXISTING_USER_ID);
+        Assert.assertTrue(prices.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyPriceHistory_NullUser() {
+        List<Price> prices = priceService.listPricesByUser(null);
+        Assert.assertTrue(prices.isEmpty());
     }
 
     @Test(expected = PriceCalculationException.class)

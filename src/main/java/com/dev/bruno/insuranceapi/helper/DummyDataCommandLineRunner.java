@@ -37,7 +37,7 @@ public class DummyDataCommandLineRunner implements CommandLineRunner {
         for (Module module : newModules) {
             moduleRepository.save(module);
         }
-        for(User user: newUsers) {
+        for (User user : newUsers) {
             userRepository.save(user);
         }
     }

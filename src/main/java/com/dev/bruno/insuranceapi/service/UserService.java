@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames={"users"})
+@CacheConfig(cacheNames = {"users"})
 public class UserService {
 
     private final UserRepository userRepository;

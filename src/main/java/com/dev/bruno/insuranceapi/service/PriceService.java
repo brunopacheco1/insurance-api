@@ -18,7 +18,9 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -45,18 +47,21 @@ public class PriceService {
         return priceRepository.save(newPrice);
     }
 
-    @Cacheable(key = "#userId")
-    public Iterable<Price> listPricesByUser(Long userId) {
+    @Cacheable(key = "#userId", condition = "#userId != null")
+    public List<Price> listPricesByUser(Long userId) {
+        if (userId == null) {
+            return new ArrayList<>();
+        }
         return priceRepository.findAllByUserId(userId);
     }
 
     private Price buildInitialPrice(PriceCalculationRequest request) {
         Module module = null;
         User user = null;
-        if(request.getModuleId() != null) {
+        if (request.getModuleId() != null) {
             module = moduleRepository.findById(request.getModuleId()).orElse(null);
         }
-        if(request.getUserId() != null) {
+        if (request.getUserId() != null) {
             user = userRepository.findById(request.getUserId()).orElse(null);
         }
         Price newPrice = new Price();
@@ -75,7 +80,7 @@ public class PriceService {
         Set<String> constraints = new HashSet<>();
         validateModuleConfiguration(price.getModule(), request.getCoverage(), constraints);
         validateUserConfiguration(price.getUser(), constraints);
-        if(!constraints.isEmpty()) {
+        if (!constraints.isEmpty()) {
             throw new PriceCalculationException(constraints);
         }
     }
@@ -84,10 +89,10 @@ public class PriceService {
         if (module == null) {
             constraints.add(ValidationHelper.MODULE_NOT_FOUND);
         }
-        if(coverage == null) {
+        if (coverage == null) {
             constraints.add(ValidationHelper.COVERAGE_NOT_FOUND);
         }
-        if(module != null && coverage != null){
+        if (module != null && coverage != null) {
             boolean lesserThanMinimum = coverage.compareTo(module.getMinimumCoverage()) == -1;
             boolean biggerThanMaximum = coverage.compareTo(module.getMaximumCoverage()) == 1;
 

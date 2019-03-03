@@ -33,7 +33,7 @@ public class InsuranceApiApplicationTests {
     private PriceService priceService;
 
     @Test
-    public void shouldSucceed() {
+    public void shouldCalculateExpectedValue() {
         PriceCalculationRequest request = new PriceCalculationRequest();
         request.setCoverage(COVERAGE_VALUE);
         request.setModuleId(MODULE_ID);

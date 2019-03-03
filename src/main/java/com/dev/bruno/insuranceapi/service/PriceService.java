@@ -6,7 +6,9 @@ import com.dev.bruno.insuranceapi.domain.PriceCalculationRequest;
 import com.dev.bruno.insuranceapi.domain.User;
 import com.dev.bruno.insuranceapi.exception.PriceCalculationException;
 import com.dev.bruno.insuranceapi.helper.ValidationHelper;
+import com.dev.bruno.insuranceapi.repository.ModuleRepository;
 import com.dev.bruno.insuranceapi.repository.PriceRepository;
+import com.dev.bruno.insuranceapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,14 +26,14 @@ import java.util.Set;
 public class PriceService {
 
     private final PriceRepository priceRepository;
-    private final ModuleService moduleService;
-    private final UserService userService;
+    private final ModuleRepository moduleRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public PriceService(PriceRepository priceRepository, ModuleService moduleService, UserService userService) {
+    public PriceService(PriceRepository priceRepository, ModuleRepository moduleRepository, UserRepository userRepository) {
         this.priceRepository = priceRepository;
-        this.moduleService = moduleService;
-        this.userService = userService;
+        this.moduleRepository = moduleRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -49,8 +51,14 @@ public class PriceService {
     }
 
     private Price buildInitialPrice(PriceCalculationRequest request) {
-        Module module = moduleService.findOne(request.getModuleId());
-        User user = userService.findOne(request.getUserId());
+        Module module = null;
+        User user = null;
+        if(request.getModuleId() != null) {
+            module = moduleRepository.findById(request.getModuleId()).orElse(null);
+        }
+        if(request.getUserId() != null) {
+            user = userRepository.findById(request.getUserId()).orElse(null);
+        }
         Price newPrice = new Price();
         newPrice.setModule(module);
         newPrice.setUser(user);
@@ -75,7 +83,11 @@ public class PriceService {
     private void validateModuleConfiguration(Module module, BigDecimal coverage, Set<String> constraints) {
         if (module == null) {
             constraints.add(ValidationHelper.MODULE_NOT_FOUND);
-        } else {
+        }
+        if(coverage == null) {
+            constraints.add(ValidationHelper.COVERAGE_NOT_FOUND);
+        }
+        if(module != null && coverage != null){
             boolean lesserThanMinimum = coverage.compareTo(module.getMinimumCoverage()) == -1;
             boolean biggerThanMaximum = coverage.compareTo(module.getMaximumCoverage()) == 1;
 

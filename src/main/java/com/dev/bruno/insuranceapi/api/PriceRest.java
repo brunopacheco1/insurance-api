@@ -24,7 +24,7 @@ public class PriceRest {
         return priceService.listPricesByUser(id);
     }
 
-    @RequestMapping(value = "/users/{id}/prices", method = RequestMethod.POST)
+    @RequestMapping(value = "/prices", method = RequestMethod.POST)
     public Price calculatePrice(@Validated @RequestBody PriceCalculationRequest request) {
         return priceService.calculatePrice(request);
     }

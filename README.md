@@ -1,6 +1,6 @@
 # insurance-api
 
-this is a Case Study for Element.
+This is a Case Study for Element.
 
 ## Development process
 

@@ -78,14 +78,14 @@ public class PriceService {
 
     private void validatePriceAndRequest(Price price, PriceCalculationRequest request) {
         Set<String> constraints = new HashSet<>();
-        validateModuleConfiguration(price.getModule(), request.getCoverage(), constraints);
-        validateUserConfiguration(price.getUser(), constraints);
+        validateModuleAndCoverage(price.getModule(), request.getCoverage(), constraints);
+        validateUser(price.getUser(), constraints);
         if (!constraints.isEmpty()) {
             throw new PriceCalculationException(constraints);
         }
     }
 
-    private void validateModuleConfiguration(Module module, BigDecimal coverage, Set<String> constraints) {
+    private void validateModuleAndCoverage(Module module, BigDecimal coverage, Set<String> constraints) {
         if (module == null) {
             constraints.add(ValidationHelper.MODULE_NOT_FOUND);
         }
@@ -104,7 +104,7 @@ public class PriceService {
         }
     }
 
-    private void validateUserConfiguration(User user, Set<String> constraints) {
+    private void validateUser(User user, Set<String> constraints) {
         if (user == null) {
             constraints.add(ValidationHelper.USER_NOT_FOUND);
         }
